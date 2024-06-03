@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../matirel/quiz_widget.dart';
+
 class qUIZ_DATA extends StatefulWidget {
   final String data;
 
@@ -12,6 +14,28 @@ class qUIZ_DATA extends StatefulWidget {
 class _qUIZ_DATAState extends State<qUIZ_DATA> {
   String _dropDownValue = 'flutter';
   var _items = ['flutter', 'c++', 'python'];
+
+  // Quiz data
+  List<Map<String, dynamic>> _quizData = [
+    {
+      'question': 'What is Flutter?',
+      'options': ['A framework', 'A language', 'A bird'],
+      'correctIndex': 0,
+    },
+    {
+      'question': 'Who developed Flutter?',
+      'options': ['Google', 'Facebook', 'Microsoft'],
+      'correctIndex': 0,
+    },
+    {
+      'question': 'What language is Flutter built with?',
+      'options': ['Java', 'Dart', 'Swift'],
+      'correctIndex': 1,
+    },
+  ];
+
+  int _score = 0;
+  bool _quizCompleted = false;
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +96,7 @@ class _qUIZ_DATAState extends State<qUIZ_DATA> {
               children: [
                 Text("please select your major to test on it ..",
                     style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.w300)),
+                    TextStyle(fontSize: 18, fontWeight: FontWeight.w300)),
               ],
             ),
           ),
@@ -83,7 +107,7 @@ class _qUIZ_DATAState extends State<qUIZ_DATA> {
               children: [
                 Container(
                   decoration:
-                      BoxDecoration(borderRadius: BorderRadius.circular(30)),
+                  BoxDecoration(borderRadius: BorderRadius.circular(30)),
                   width: 200,
                   height: 100,
                   child: SizedBox(
@@ -110,7 +134,7 @@ class _qUIZ_DATAState extends State<qUIZ_DATA> {
                             value: _dropDownValue,
                             borderRadius: BorderRadius.circular(30),
                             icon:
-                                const Icon(Icons.keyboard_arrow_down_outlined),
+                            const Icon(Icons.keyboard_arrow_down_outlined),
                             iconSize: 50,
                             style: TextStyle(
                                 fontWeight: FontWeight.w800,
@@ -141,22 +165,42 @@ class _qUIZ_DATAState extends State<qUIZ_DATA> {
                   child: SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: _quizCompleted
+                          ? null
+                          : () {
                         showModalBottomSheet(
                           context: context,
                           builder: (BuildContext context) {
-                            return SizedBox(
-                              height: 700,
-                              // Child that contains the quiz
-                              child: Container(
-                                color: Colors.lightGreen.shade200,
+                            return Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(30.0),
+                                  topRight: Radius.circular(30.0),
+                                ),
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 5,
+                                    blurRadius: 7,
+                                    offset: Offset(0, 3), // changes position of shadow
+                                  ),
+                                ],
+                              ),
+                              child: SizedBox(
+                                height: 700,
+                                // Child that contains the quiz
+                                child: QuizWidget(
+                                  quizData: _quizData,
+                                  onQuizCompleted: _onQuizCompleted,
+                                ),
                               ),
                             );
                           },
                         );
                       },
                       child: Text(
-                        'Let\'s go ',
+                        _quizCompleted ? 'Quiz Completed' : 'Let\'s go ',
                         style: TextStyle(
                           color: Colors.red,
                         ),
@@ -166,9 +210,39 @@ class _qUIZ_DATAState extends State<qUIZ_DATA> {
                 ),
               ),
             ),
-          )
+          ),
+          if (_quizCompleted)
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Congratulations!',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    'You scored $_score out of ${_quizData.length}',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ],
+              ),
+            ),
         ],
       ),
     );
+  }
+
+  void _onQuizCompleted(List<int> selectedAnswers) {
+    int correctAnswers = 0;
+    for (int i = 0; i < _quizData.length; i++) {
+      if (selectedAnswers[i] == _quizData[i]['correctIndex']) {
+        correctAnswers++;
+      }
+    }
+    setState(() {
+      _score = correctAnswers;
+      _quizCompleted = true;
+    });
   }
 }
