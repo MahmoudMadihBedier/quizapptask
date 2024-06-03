@@ -1,5 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:quizapptask/scrrens/data_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -9,6 +13,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  TextEditingController _textFieldControler =TextEditingController();
+  String? _ErrorMassage ;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,15 +62,17 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Expanded(
                   child: TextField(
-                    decoration: InputDecoration(
+                    controller: _textFieldControler,
+                    decoration: InputDecoration
+                      (errorText: _ErrorMassage,
                       focusColor: Colors.green,
                       fillColor: Colors.lightBlueAccent,
                       hintText: 'Enter your information',
                       border: OutlineInputBorder(
-
                         borderRadius: BorderRadius.circular(30),
                       ),
                     ),
+
                   ),
                 ),
               ],
@@ -89,7 +97,18 @@ class _HomePageState extends State<HomePage> {
                   child:ElevatedButton(
                     
                     onPressed: () {
-                      
+                     if(_textFieldControler.text.isEmpty){
+                       setState(() {
+                         _ErrorMassage='please enter the full name ';
+                       });
+                     }
+                     else{
+                       setState(() {
+                         _ErrorMassage=null;
+                       });
+                       Get.to(qUIZ_DATA(data:_textFieldControler.text));
+                     }
+
                     },
                     child: Text('Let\'s play',style: TextStyle(
                       color: Colors.red
