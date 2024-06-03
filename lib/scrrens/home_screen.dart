@@ -88,7 +88,9 @@ class _HomePageState extends State<HomePage> {
                 },
                   child:ElevatedButton(
                     
-                    onPressed: () {},
+                    onPressed: () {
+                      
+                    },
                     child: Text('Let\'s play',style: TextStyle(
                       color: Colors.red
                     ),),
